@@ -53,6 +53,11 @@ Create a new instance:
 const rangeable = new Rangeable(input, {
     type: "single",
     tooltips: "always",
+    min: 0,
+    max: 100,
+    step: 1,
+    value: 50,
+    vertical: false,
     onInit: function() {
         // do something when the instance has loaded
     },
