@@ -5,13 +5,13 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version: 0.0.2
+ * Version: 0.0.3
  *
  */
 class Rangeable {
 	constructor(input, config) {
 		const defaultConfig = {
-			tooltip: true,
+			tooltips: true,
 			showTooltips: true,
 			multiple: false,
 			classes: {
@@ -142,12 +142,12 @@ class Rangeable {
 				: o.size;
 		}
 
-		if (o.tooltip) {
+		if (o.tooltips) {
 			container.classList.add("has-tooltip");
-		}
 
-		if ( o.showTooltips ) {
-			container.classList.add("show-tooltip");
+			if ( typeof o.tooltips === "string" && o.tooltips === "always" ) {
+				container.classList.add("show-tooltip");
+			}
 		}
 
 		this.input.parentNode.insertBefore(container, this.input);
@@ -369,7 +369,7 @@ class Rangeable {
 			const values = this.input.values;
 			values[index] = value;
 
-			if ( this.config.tooltip ) {
+			if ( this.config.tooltips ) {
 				// update the node so we can get the width / height
 				nodes.tooltip[index].textContent = value;
 

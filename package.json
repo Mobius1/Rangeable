@@ -1,6 +1,6 @@
 {
   "name": "rangeable",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A small dependency-free lib to transform range elements into something prettier and more configurable.",
   "main": "dist/rangeable.min.js",
   "scripts": {
