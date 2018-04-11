@@ -1,6 +1,3 @@
-import * as utils from "./utils/utils";
-
-
 /*!
  *
  * Rangeable
@@ -8,10 +5,10 @@ import * as utils from "./utils/utils";
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version: 0.0.1
+ * Version: 0.0.2
  *
  */
-export default class Rangeable {
+class Rangeable {
 	constructor(input, config) {
 		const defaultConfig = {
 			tooltip: true,
@@ -96,21 +93,21 @@ export default class Rangeable {
 		const o = this.config;
 		const c = o.classes;
 
-		const container = utils.createElement("div", c.container);
-		const track = utils.createElement("div", c.track);
-		const progress = utils.createElement("div", c.progress);
+		const container = this.createElement("div", c.container);
+		const track = this.createElement("div", c.track);
+		const progress = this.createElement("div", c.progress);
 
-		let handle = utils.createElement("div", c.handle);
-		let tooltip = utils.createElement("div", c.tooltip);
+		let handle = this.createElement("div", c.handle);
+		let tooltip = this.createElement("div", c.tooltip);
 
 		track.appendChild(progress);
 
-		if ( this.config.multiple ) {
-			handle = [utils.createElement("div", c.handle),	utils.createElement("div", c.handle)];
+		if ( o.multiple ) {
+			handle = [this.createElement("div", c.handle),	this.createElement("div", c.handle)];
 			tooltip = [
-				utils.createElement("div", c.tooltip),
-				utils.createElement("div", c.tooltip),
-				utils.createElement("div", c.tooltip)
+				this.createElement("div", c.tooltip),
+				this.createElement("div", c.tooltip),
+				this.createElement("div", c.tooltip)
 			];
 
 			handle.forEach((node, i) => {
@@ -119,7 +116,7 @@ export default class Rangeable {
 				node.appendChild(tooltip[i]);
 			});
 
-			if ( this.config.vertical ) {
+			if ( o.vertical ) {
 				progress.appendChild(handle[0]);
 			}
 
@@ -149,7 +146,7 @@ export default class Rangeable {
 			container.classList.add("has-tooltip");
 		}
 
-		if ( this.config.showTooltips ) {
+		if ( o.showTooltips ) {
 			container.classList.add("show-tooltip");
 		}
 
@@ -493,19 +490,19 @@ export default class Rangeable {
 	}
 
 	onInit() {
-		if (utils.isFunction(this.config.onInit)) {
+		if (this.isFunction(this.config.onInit)) {
 			this.config.onInit.call(this, this.input.value);
 		}
 	}
 
 	onChange() {
-		if (utils.isFunction(this.config.onChange)) {
+		if (this.isFunction(this.config.onChange)) {
 			this.config.onChange.call(this, this.input.value);
 		}
 	}
 
 	onEnd() {
-		if (utils.isFunction(this.config.onEnd)) {
+		if (this.isFunction(this.config.onEnd)) {
 			this.config.onEnd.call(this, this.input.value);
 		}
 	}
@@ -521,8 +518,8 @@ export default class Rangeable {
 			reset: this.reset.bind(this)
 		};
 
-		this.listeners.scroll = utils.throttle(this.listeners.update, 100);
-		this.listeners.resize = utils.throttle(this.listeners.update, 50);
+		this.listeners.scroll = this.throttle(this.listeners.update, 100);
+		this.listeners.resize = this.throttle(this.listeners.update, 50);
 
 		// throttle the scroll callback for performance
 		document.addEventListener("scroll", this.listeners.scroll, false);
@@ -568,5 +565,47 @@ export default class Rangeable {
 		}
 
 		this.listeners = null;
+	}
+	/**
+	 * Create DOM element helper
+	 * @param  {String}   a nodeName
+	 * @param  {String|Object}   b className or properties / attributes
+	 * @return {Object}
+	 */
+	createElement(type, obj) {
+		const el = document.createElement(type);
+
+		if (typeof obj === "string") {
+			el.classList.add(obj);
+		} else if ( obj === Object(obj) ) {
+			for ( let prop in obj ) {
+				if ( prop in el ) {
+					el[prop] = obj[prop];
+				} else {
+					el.setAttribute(el[prop], obj[prop]);
+				}
+			}
+		}
+
+		return el;
+	}
+
+	isFunction(func) {
+		return func && typeof func === "function";
+	}
+
+	// throttler
+	throttle(fn, limit, context) {
+		let wait;
+		return function() {
+			context = context || this;
+			if (!wait) {
+				fn.apply(context, arguments);
+				wait = true;
+				return setTimeout(function() {
+					wait = false;
+				}, limit);
+			}
+		};
 	}
 }
