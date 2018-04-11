@@ -27,14 +27,17 @@ npm install rangeable --save
 
 ### Browser
 
-Grab the file from one of the CDNs and include it in your page:
+Grab the files from one of the CDNs and include it in your page:
 
 ```
+https://unpkg.com/rangeable@latest/dist/rangeable.min.css
 https://unpkg.com/rangeable@latest/dist/rangeable.min.js
 ```
+
 or
 
 ```
+https://cdn.jsdelivr.net/npm/rangeable@latest/dist/rangeable.min.css
 https://cdn.jsdelivr.net/npm/rangeable@latest/dist/rangeable.min.js
 ```
 
