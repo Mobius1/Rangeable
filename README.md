@@ -50,7 +50,33 @@ You can replace `latest` with the required release number if needed.
 Create a new instance:
 
 ```javascript
-const rangeable = new Rangeable(input, options);
+const rangeable = new Rangeable(input, {
+    type: "single",
+    tooltips: "always",
+    onInit: function() {
+        // do something when the instance has loaded
+    },
+    onStart: function() {
+        // do something on mousedown/touchstart
+    },
+    onChange: function() {
+        // do something on mousemove/touchmove or
+        // when the value changes by other means
+    },
+    onEnd: function() {
+        // do something on mouseup/touchend
+    },
+    classes: {
+        input: "rangeable-input",
+        container: "rangeable-container",
+        vertical: "rangeable-vertical",
+        progress: "rangeable-progress",
+        handle: "rangeable-handle",
+        tooltip: "rangeable-tooltip",
+        track: "rangeable-track",
+        multiple: "rangeable-multiple",
+    }
+});
 ```
 
 You can pass either a reference to the input or a CSS3 selector string:
