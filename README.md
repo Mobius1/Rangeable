@@ -53,7 +53,7 @@ const rangeable = new Rangeable(input, options);
 You can pass either a reference to the input or a CSS3 selector string:
 
 ```javascript
-const myRangeInput = document.getElementById('myRangeInput')'
+const myRangeInput = document.getElementById('myRangeInput');
 const rangeable = new Rangeable(myRangeInput);
 
 // or
