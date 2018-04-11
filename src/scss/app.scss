@@ -1,0 +1,236 @@
+$color-primary: #3db13d;
+$color-secondary: #ccc;
+
+$tip-arrow: 5px;
+$tip-offset: 5px;
+$tip-radius: 3px;
+$tip-padding: 2px 13px;
+
+$bar-size: 8px;
+
+$handle-border: 6px;
+$handle-size: 22px;
+
+
+.ranger-container {
+	cursor: pointer;
+	width: 100%;
+
+	&.focus {
+		.ranger-handle {
+			border: 1px solid #74b9ff;
+		}
+	}
+
+	/* track */
+	.ranger-track {
+		width: 100%;
+		height: $bar-size;
+		background-color: $color-secondary;
+		position: relative;
+		border-radius: $bar-size / 2;
+	}
+
+	/* progress bar */
+	.ranger-progress {
+		height: $bar-size;
+		width: 100%;
+		background-color: $color-primary;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border-radius: $bar-size / 2;
+		transform-origin: 0 0 0;
+
+		& > .ranger-tooltip {
+			display: none;
+			z-index: 11;
+			top: auto;
+			bottom: calc(100% + #{($handle-size - $bar-size) / 2} + #{$tip-offset + $tip-arrow});
+			white-space: nowrap;
+		}
+	}
+
+	&.ranger-multiple {
+
+		&.combined-tooltip {
+			.ranger-handle {
+				.ranger-tooltip {
+					opacity: 0;
+				}
+			}
+		}
+
+		.ranger-handle {
+			&:nth-child(1) {
+				left: -($handle-size / 2);
+			}
+
+			&:nth-child(2) {
+				right: -($handle-size / 2);
+			}
+		}
+	}
+
+	/* handle */
+	.ranger-handle {
+		box-sizing: border-box;
+		width: $handle-size;
+		height: $handle-size;
+		border: $handle-border solid $color-primary;
+		border-radius: 50%;
+		background-color: #fff;
+		position: absolute;
+		top: -(($handle-size - $bar-size) / 2);
+		right: -($handle-size / 2);
+
+		&.active {
+			z-index: 10;
+		}
+
+		.ranger-tooltip {
+			display: none;
+		}
+	}
+
+		/* tooltip */
+		.ranger-tooltip {
+			position: absolute;
+
+			bottom: calc(100% + #{($handle-size - $bar-size) / 2} + #{$tip-offset + $tip-arrow} - #{($bar-size - $handle-border) / 2});
+			right: 50%;
+			transform: translate3d(50%,0,0);
+
+			text-align: center;
+
+			padding: $tip-padding;
+			background-color: $color-primary;
+			border-radius: $tip-radius;
+			font-weight: bold;
+			color: #fff;
+			font-family: Consolas, Courier New, Lucida Console, sans-serif;
+
+			/* tooltip arrow */
+			&::before {
+				width: 0;
+				height: 0;
+				border-width: $tip-arrow $tip-arrow 0 $tip-arrow;
+				border-style: solid;
+				border-color: $color-primary transparent transparent transparent;
+				position: absolute;
+				left: 50%;
+				top: 100%;
+				transform: translate3d(-50%,0,0);
+				content: "";
+			}
+		}
+
+
+	&.ranger-vertical {
+		height: 100%;
+		width: auto;
+
+		.ranger-track {
+			width: $bar-size;
+			height: 100%;
+		}
+
+		/* progress bar */
+		.ranger-progress {
+			width: $bar-size;
+			height: 100%;
+			top: auto;
+			bottom: 0;
+			transform-origin: 0 100% 0;
+		}
+
+		/* handle */
+		.ranger-handle {
+			right: auto;
+			left: -(($handle-size - $bar-size) / 2);
+			top: -($handle-size / 2);
+		}
+
+		.ranger-tooltip {
+			position: absolute;
+
+			top: 50%;
+			left: $bar-size + ($handle-size / 2) + $tip-offset;
+			right: auto;
+			bottom: auto;
+			transform: translate3d(0,-50%,0);
+
+			&::before {
+				right: 100%;
+				left: auto;
+				top: 50%;
+				transform: translate3d(0,-50%,0);
+
+				border-width: $tip-arrow $tip-arrow $tip-arrow 0;
+				border-color: transparent $color-primary transparent transparent;
+			}
+		}
+
+		&.combined-tooltip {
+
+			.ranger-progress > .ranger-tooltip::before {
+				display:block;
+			}
+
+			.ranger-handle .ranger-tooltip {
+				opacity: 0;
+			}
+		}
+
+		&.ranger-multiple {
+			.ranger-handle {
+				&:nth-child(1) {
+					top: -($handle-size / 2);
+					left: -(($handle-size - $bar-size) / 2);
+				}
+
+				&:nth-child(2) {
+					bottom: -($handle-size / 2);
+					top: auto;
+				}
+			}
+		}
+	}
+
+	&.combined-tooltip {
+		&.dragging, &.show-tooltip {
+			.ranger-progress > .ranger-tooltip {
+				display:block;
+			}
+		}
+	}
+
+	&.dragging, &.show-tooltip {
+		&.has-tooltip {
+			.ranger-handle {
+				.ranger-tooltip {
+					display: block;
+				}
+			}
+		}
+	}
+}
+
+.ranger-input {
+	position: absolute;
+	overflow: hidden;
+	clip: rect(0px, 0px, 0px, 0px);
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	border: 0 none;
+
+	&:focus {
+		& + .ranger-track {
+			.ranger-handle {
+				border: 1px solid $color-primary;
+			}
+		}
+	}
+}
