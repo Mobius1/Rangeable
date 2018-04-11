@@ -5,7 +5,7 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version: 0.0.4
+ * Version: 0.0.5
  *
  */
 class Rangeable {
@@ -36,7 +36,7 @@ class Rangeable {
 		this.mouseAxis 	= { x: "clientX", y: "clientY" };
 		this.trackSize 	= { x: "width", y: "height" };
 		this.trackPos 	= { x: "left", y: "top" };
-		
+
 		this.double = this.config.type === "double" || Array.isArray(this.config.value);
 
 		this.touch 		= "ontouchstart" in window || (window.DocumentTouch && document instanceof DocumentTouch);
@@ -325,6 +325,10 @@ class Rangeable {
 		} else {
 			this.setValue();
 		}
+	}
+
+	getValue() {
+		return this.double ? this.input.values : this.input.value;
 	}
 
 	/**
