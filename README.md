@@ -60,8 +60,7 @@ const rangeable = new Rangeable(input, {
         // do something on mousedown/touchstart
     },
     onChange: function() {
-        // do something on mousemove/touchmove or
-        // when the value changes by other means
+        // do something when the value changes
     },
     onEnd: function() {
         // do something on mouseup/touchend
