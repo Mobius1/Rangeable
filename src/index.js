@@ -5,15 +5,14 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version: 0.0.3
+ * Version: 0.0.4
  *
  */
 class Rangeable {
 	constructor(input, config) {
 		const defaultConfig = {
-			tooltips: true,
-			showTooltips: true,
-			multiple: false,
+			type: "single",
+			tooltips: "always",
 			classes: {
 				input: "ranger-input",
 				container: "ranger-container",
@@ -37,6 +36,8 @@ class Rangeable {
 		this.mouseAxis 	= { x: "clientX", y: "clientY" };
 		this.trackSize 	= { x: "width", y: "height" };
 		this.trackPos 	= { x: "left", y: "top" };
+		
+		this.double = this.config.type === "double" || Array.isArray(this.config.value);
 
 		this.touch 		= "ontouchstart" in window || (window.DocumentTouch && document instanceof DocumentTouch);
 
@@ -73,12 +74,8 @@ class Rangeable {
 
 			this.input.ranger = this;
 
-			if ( this.config.multiple ) {
-				this.input.values = [];
-
-				if ( this.config.value ) {
-					this.input.values = this.config.value;
-				}
+			if ( this.double ) {
+				this.input.values = this.config.value ? this.config.value : [this.input.min, this.input.max];
 			}
 
 			this.render();
@@ -102,7 +99,7 @@ class Rangeable {
 
 		track.appendChild(progress);
 
-		if ( o.multiple ) {
+		if ( this.double ) {
 			handle = [this.createElement("div", c.handle),	this.createElement("div", c.handle)];
 			tooltip = [
 				this.createElement("div", c.tooltip),
@@ -187,7 +184,7 @@ class Rangeable {
 
 		let index = false;
 
-		if ( this.config.multiple ) {
+		if ( this.double ) {
 			index = this.activeHandle.index;
 
 			switch(index) {
@@ -293,7 +290,7 @@ class Rangeable {
 	recalculate() {
 		let handle = [];
 
-		if ( this.config.multiple ) {
+		if ( this.double ) {
 			this.nodes.handle.forEach((node, i) => {
 				handle[i] = node.getBoundingClientRect();
 			});
@@ -321,7 +318,7 @@ class Rangeable {
 			this.accuracy = (this.input.step.split('.')[1] || []).length;
 		}
 
-		if ( this.config.multiple ) {
+		if ( this.double ) {
 			this.input.values.forEach((val, i) => {
 				this.setValue(val, i);
 			});
@@ -342,11 +339,11 @@ class Rangeable {
 		const max = parseFloat(this.input.max);
 		let handle = nodes.handle;
 
-		if ( this.config.multiple && index === undefined ) {
+		if ( this.double && index === undefined ) {
 			return false;
 		}
 
-		if ( this.config.multiple ) {
+		if ( this.double ) {
 			handle = this.activeHandle ? this.activeHandle : nodes.handle[index];
 		}
 
@@ -365,7 +362,7 @@ class Rangeable {
 		}
 
 		// update the value
-		if ( this.config.multiple ) {
+		if ( this.double ) {
 			const values = this.input.values;
 			values[index] = value;
 
@@ -403,7 +400,7 @@ class Rangeable {
 	setPosition(value) {
 		let width;
 
-		if ( this.config.multiple ) {
+		if ( this.double ) {
 			let start = this.getPosition(this.input.values[0]);
 			let end = this.getPosition(this.input.values[1]);
 
@@ -449,7 +446,7 @@ class Rangeable {
 	 * @return {Obejct} HTMLElement
 	 */
 	getHandle(e) {
-		if ( !this.config.multiple ) {
+		if ( !this.double ) {
 			return this.nodes.handle;
 		}
 
