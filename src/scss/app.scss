@@ -12,18 +12,18 @@ $handle-border: 6px;
 $handle-size: 22px;
 
 
-.ranger-container {
+.rangeable-container {
 	cursor: pointer;
 	width: 100%;
 
 	&.focus {
-		.ranger-handle {
+		.rangeable-handle {
 			border: 1px solid #74b9ff;
 		}
 	}
 
 	/* track */
-	.ranger-track {
+	.rangeable-track {
 		width: 100%;
 		height: $bar-size;
 		background-color: $color-secondary;
@@ -32,7 +32,7 @@ $handle-size: 22px;
 	}
 
 	/* progress bar */
-	.ranger-progress {
+	.rangeable-progress {
 		height: $bar-size;
 		width: 100%;
 		background-color: $color-primary;
@@ -42,7 +42,7 @@ $handle-size: 22px;
 		border-radius: $bar-size / 2;
 		transform-origin: 0 0 0;
 
-		& > .ranger-tooltip {
+		& > .rangeable-tooltip {
 			display: none;
 			z-index: 11;
 			top: auto;
@@ -51,17 +51,17 @@ $handle-size: 22px;
 		}
 	}
 
-	&.ranger-multiple {
+	&.rangeable-multiple {
 
 		&.combined-tooltip {
-			.ranger-handle {
-				.ranger-tooltip {
+			.rangeable-handle {
+				.rangeable-tooltip {
 					opacity: 0;
 				}
 			}
 		}
 
-		.ranger-handle {
+		.rangeable-handle {
 			&:nth-child(1) {
 				left: -($handle-size / 2);
 			}
@@ -73,7 +73,7 @@ $handle-size: 22px;
 	}
 
 	/* handle */
-	.ranger-handle {
+	.rangeable-handle {
 		box-sizing: border-box;
 		width: $handle-size;
 		height: $handle-size;
@@ -88,13 +88,13 @@ $handle-size: 22px;
 			z-index: 10;
 		}
 
-		.ranger-tooltip {
+		.rangeable-tooltip {
 			display: none;
 		}
 	}
 
 		/* tooltip */
-		.ranger-tooltip {
+		.rangeable-tooltip {
 			position: absolute;
 
 			bottom: calc(100% + #{($handle-size - $bar-size) / 2} + #{$tip-offset + $tip-arrow} - #{($bar-size - $handle-border) / 2});
@@ -126,17 +126,17 @@ $handle-size: 22px;
 		}
 
 
-	&.ranger-vertical {
+	&.rangeable-vertical {
 		height: 100%;
 		width: auto;
 
-		.ranger-track {
+		.rangeable-track {
 			width: $bar-size;
 			height: 100%;
 		}
 
 		/* progress bar */
-		.ranger-progress {
+		.rangeable-progress {
 			width: $bar-size;
 			height: 100%;
 			top: auto;
@@ -145,13 +145,13 @@ $handle-size: 22px;
 		}
 
 		/* handle */
-		.ranger-handle {
+		.rangeable-handle {
 			right: auto;
 			left: -(($handle-size - $bar-size) / 2);
 			top: -($handle-size / 2);
 		}
 
-		.ranger-tooltip {
+		.rangeable-tooltip {
 			position: absolute;
 
 			top: 50%;
@@ -173,17 +173,17 @@ $handle-size: 22px;
 
 		&.combined-tooltip {
 
-			.ranger-progress > .ranger-tooltip::before {
+			.rangeable-progress > .rangeable-tooltip::before {
 				display:block;
 			}
 
-			.ranger-handle .ranger-tooltip {
+			.rangeable-handle .rangeable-tooltip {
 				opacity: 0;
 			}
 		}
 
-		&.ranger-multiple {
-			.ranger-handle {
+		&.rangeable-multiple {
+			.rangeable-handle {
 				&:nth-child(1) {
 					top: -($handle-size / 2);
 					left: -(($handle-size - $bar-size) / 2);
@@ -199,7 +199,7 @@ $handle-size: 22px;
 
 	&.combined-tooltip {
 		&.dragging, &.show-tooltip {
-			.ranger-progress > .ranger-tooltip {
+			.rangeable-progress > .rangeable-tooltip {
 				display:block;
 			}
 		}
@@ -207,8 +207,8 @@ $handle-size: 22px;
 
 	&.dragging, &.show-tooltip {
 		&.has-tooltip {
-			.ranger-handle {
-				.ranger-tooltip {
+			.rangeable-handle {
+				.rng-tooltip {
 					display: block;
 				}
 			}
@@ -216,7 +216,7 @@ $handle-size: 22px;
 	}
 }
 
-.ranger-input {
+.rangeable-input {
 	position: absolute;
 	overflow: hidden;
 	clip: rect(0px, 0px, 0px, 0px);
@@ -227,8 +227,8 @@ $handle-size: 22px;
 	border: 0 none;
 
 	&:focus {
-		& + .ranger-track {
-			.ranger-handle {
+		& + .rangeable-track {
+			.rangeable-handle {
 				border: 1px solid $color-primary;
 			}
 		}
