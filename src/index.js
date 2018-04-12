@@ -5,7 +5,7 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version: 0.0.9
+ * Version: 0.0.10
  *
  */
 class Rangeable {
@@ -68,18 +68,19 @@ class Rangeable {
 				}
 			}
 
-			if (!this.input.defaultValue) {
-				this.input.defaultValue = this.input.value;
-			}
-
 			this.axis = !this.config.vertical ? "x" : "y";
 
 			this.input.rangeable = this;
 
 			if ( this.double ) {
 				this.input.values = this.config.value ? this.config.value : [this.input.min, this.input.max];
+				this.input.defaultValues = this.input.values.slice();
+			} else {
+				if (!this.input.defaultValue) {
+					this.input.defaultValue = this.input.value;
+				}
 			}
-
+				
 			this.render();
 
 			this.initialised = true;
@@ -163,7 +164,13 @@ class Rangeable {
 	}
 
 	reset() {
-		this.setValue(this.input.defaultValue);
+		if ( this.double ) {
+			this.input.defaultValues.forEach((val, i) => {
+				this.setValue(val, i);
+			});
+		} else {
+			this.setValue(this.input.defaultValue);
+		}
 		this.onEnd();
 	}
 
