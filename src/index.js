@@ -165,9 +165,7 @@ class Rangeable {
 
 	reset() {
 		if ( this.double ) {
-			this.input.defaultValues.forEach((val, i) => {
-				this.setValue(val, i);
-			});
+			this.input.defaultValues.forEach(this.setValue, this);
 		} else {
 			this.setValue(this.input.defaultValue);
 		}
