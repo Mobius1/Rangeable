@@ -5,7 +5,7 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version: 0.0.8
+ * Version: 0.0.9
  *
  */
 class Rangeable {
@@ -22,6 +22,7 @@ class Rangeable {
 				tooltip: "rangeable-tooltip",
 				track: "rangeable-track",
 				multiple: "rangeable-multiple",
+				disabled: "rangeable-disabled",
 			}
 		};
 
@@ -36,6 +37,7 @@ class Rangeable {
 		this.mouseAxis 	= { x: "clientX", y: "clientY" };
 		this.trackSize 	= { x: "width", y: "height" };
 		this.trackPos 	= { x: "left", y: "top" };
+		this.lastPos 		= 0;
 
 		this.double = this.config.type === "double" || Array.isArray(this.config.value);
 
@@ -173,6 +175,13 @@ class Rangeable {
 		const axis = this.touch ? e.touches[0][this.mouseAxis[this.axis]] : e[this.mouseAxis[this.axis]];
 		const pos = axis - this.rects.container[this.trackPos[this.axis]];
 		const size = rect.container[this.trackSize[this.axis]];
+		
+		if ( e.type === "mousedown" ) {
+			if ( (!this.double && this.nodes.handle.contains(e.target)) ||
+					 (this.double && (this.nodes.handle[0].contains(e.target) || this.nodes.handle[1].contains(e.target))) ) {
+				return false;
+			}
+		}
 
 		// get the position of the cursor over the bar as a percentage
 		let position = this.config.vertical
@@ -184,11 +193,15 @@ class Rangeable {
 
 		// apply granularity (step)
 		value = Math.ceil(value / step) * step;
-
+		
+		if ( axis >= this.lastPos ) {
+			value -= step;
+		}		
+		
 		// prevent change event from firing if slider hasn't moved
 		if ( parseFloat(value) === parseFloat(this.startValue) ) {
 			return false;
-		}
+		}		
 
 		let index = false;
 
@@ -261,6 +274,7 @@ class Rangeable {
 	 */
 	move(e) {
 		this.setValueFromPosition(e);
+		this.lastPos = this.touch ? e.touches[0][this.mouseAxis[this.axis]] : e[this.mouseAxis[this.axis]];
 	}
 
 	/**
@@ -547,6 +561,34 @@ class Rangeable {
 			this.config.onEnd.call(this, this.getValue());
 		}
 	}
+	
+	enable() {
+		if ( this.disabled ) {
+			if ( this.touch ) {
+				this.nodes.container.addEventListener("touchstart", this.events.touchstart, false);
+			} else {
+				this.nodes.container.addEventListener("mousedown", this.events.down);
+			}
+
+			this.nodes.container.classList.remove(this.config.classes.disabled);
+			
+			this.disabled = false;
+		}
+	}
+	
+	disable() {
+		if ( !this.disabled ) {
+			if ( this.touch ) {
+				this.nodes.container.removeEventListener("touchstart", this.events.touchstart);
+			} else {
+				this.nodes.container.removeEventListener("mousedown", this.events.down);
+			}
+
+			this.nodes.container.classList.add(this.config.classes.disabled);
+
+			this.disabled = true;
+		}
+	}	
 
 	bind() {
 		this.events = {
@@ -613,6 +655,7 @@ class Rangeable {
 
 		this.events = null;
 	}
+	
 	/**
 	 * Create DOM element helper
 	 * @param  {String}   a nodeName
@@ -627,8 +670,8 @@ class Rangeable {
 		return el;
 	}
 
-	isFunction(func) {
-		return func && typeof func === "function";
+	isFunction(f) {
+		return f && typeof f === "function";
 	}
 
 	// throttler
