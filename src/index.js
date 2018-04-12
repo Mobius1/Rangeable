@@ -5,7 +5,7 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version: 0.0.7
+ * Version: 0.0.8
  *
  */
 class Rangeable {
@@ -113,6 +113,7 @@ class Rangeable {
 				node.index = i;
 				progress.appendChild(node);
 				node.appendChild(tooltip[i]);
+				node.tabIndex = 1;
 			});
 
 			if ( o.vertical ) {
@@ -184,6 +185,11 @@ class Rangeable {
 		// apply granularity (step)
 		value = Math.ceil(value / step) * step;
 
+		// prevent change event from firing if slider hasn't moved
+		if ( parseFloat(value) === parseFloat(this.startValue) ) {
+			return false;
+		}
+
 		let index = false;
 
 		if ( this.double ) {
@@ -203,12 +209,7 @@ class Rangeable {
 			}
 		}
 
-		// Only update the value if it's different.
-		// This allows the onChange event to be fired only on a step
-		// and not all the time.
-		if (e.type === "mousedown" || parseFloat(value) !== parseFloat(this.input.value)) {
-			this.setValue(value, index);
-		}
+		this.setValue(value, index);
 	}
 
 	change() {
@@ -244,12 +245,12 @@ class Rangeable {
 		this.setValueFromPosition(e);
 
 		if ( this.touch ) {
-			document.addEventListener("touchmove", this.listeners.move, false);
-			document.addEventListener("touchend", this.listeners.up, false);
-			document.addEventListener("touchcancel", this.listeners.up, false);
+			document.addEventListener("touchmove", this.events.move, false);
+			document.addEventListener("touchend", this.events.up, false);
+			document.addEventListener("touchcancel", this.events.up, false);
 		} else {
-			document.addEventListener("mousemove", this.listeners.move, false);
-			document.addEventListener("mouseup", this.listeners.up, false);
+			document.addEventListener("mousemove", this.events.move, false);
+			document.addEventListener("mouseup", this.events.up, false);
 		}
 	}
 
@@ -277,12 +278,12 @@ class Rangeable {
 		this.activeHandle.classList.remove('active');
 		this.activeHandle = false;
 
-		document.removeEventListener("mousemove", this.listeners.move);
-		document.removeEventListener("mouseup", this.listeners.up);
+		document.removeEventListener("mousemove", this.events.move);
+		document.removeEventListener("mouseup", this.events.up);
 
-		document.removeEventListener("touchmove", this.listeners.move);
-		document.removeEventListener("touchend", this.listeners.up);
-		document.removeEventListener("touchcancel", this.listeners.up);
+		document.removeEventListener("touchmove", this.events.move);
+		document.removeEventListener("touchend", this.events.up);
+		document.removeEventListener("touchcancel", this.events.up);
 
 		if ( this.startValue !== this.stopValue ) {
 			this.input.dispatchEvent(new Event("change"));
@@ -380,7 +381,7 @@ class Rangeable {
 			handle = this.activeHandle ? this.activeHandle : nodes.handle[index];
 		}
 
-		const doChange = this.initialised && value !== this.input.value;
+		const doChange = this.initialised && (value !== this.input.value || this.nativeEvent);
 
 		// update the value
 		if ( this.double ) {
@@ -414,8 +415,18 @@ class Rangeable {
 		if ( doChange ) {
 			this.onChange();
 
-			this.input.dispatchEvent(new Event("input"));
+			if ( !this.nativeEvent ) {
+				this.input.dispatchEvent(new Event("input"));
+			}
+
+			this.nativeEvent = false;
 		}
+	}
+
+	native() {
+		this.nativeEvent = true;
+
+		this.setValue();
 	}
 
 	/**
@@ -458,9 +469,9 @@ class Rangeable {
 	 * @return {Boolean}
 	 */
 	tipsIntersecting() {
-		const nodes = this.nodes.tooltip;
-		const a = nodes[0].getBoundingClientRect();
-		const b = nodes[1].getBoundingClientRect();
+		const tips = this.nodes.tooltip;
+		const a = tips[0].getBoundingClientRect();
+		const b = tips[1].getBoundingClientRect();
 
 		return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
 	}
@@ -497,7 +508,7 @@ class Rangeable {
 	 */
 	destroy() {
 		if ( this.input.rangeable ) {
-			// remove all event listeners
+			// remove all event events
 			this.unbind();
 
 			// remove the className from the input
@@ -538,63 +549,69 @@ class Rangeable {
 	}
 
 	bind() {
-		this.listeners = {
+		this.events = {
 			down: this.down.bind(this),
 			touchstart: this.touchstart.bind(this),
 			move: this.move.bind(this),
 			up: this.up.bind(this),
 			update: this.update.bind(this),
 			change: this.change.bind(this),
-			reset: this.reset.bind(this)
+			reset: this.reset.bind(this),
+			set: this.native.bind(this),
 		};
 
-		this.listeners.scroll = this.throttle(this.listeners.update, 100);
-		this.listeners.resize = this.throttle(this.listeners.update, 50);
+		this.events.scroll = this.throttle(this.events.update, 100);
+		this.events.resize = this.throttle(this.events.update, 50);
 
 		// throttle the scroll callback for performance
-		document.addEventListener("scroll", this.listeners.scroll, false);
+		document.addEventListener("scroll", this.events.scroll, false);
 
 		// throttle the resize callback for performance
-		window.addEventListener("resize", this.listeners.resize, false);
+		window.addEventListener("resize", this.events.resize, false);
 
 		// detect native change event
-		this.input.addEventListener("change", this.listeners.change, false);
+		this.input.addEventListener("change", this.events.change, false);
 
 		if ( this.touch ) {
-			this.nodes.container.addEventListener("touchstart", this.listeners.touchstart, false);
+			this.nodes.container.addEventListener("touchstart", this.events.touchstart, false);
 		} else {
-			this.nodes.container.addEventListener("mousedown", this.listeners.down);
+			this.nodes.container.addEventListener("mousedown", this.events.down);
 		}
+
+		// listen for native input to allow keyboard control on focus
+		this.input.addEventListener('input', this.events.set);
 
 		// detect form reset
 		if (this.input.form) {
-			this.input.form.addEventListener("reset", this.listeners.reset, false);
+			this.input.form.addEventListener("reset", this.events.reset, false);
 		}
 	}
 
 	unbind() {
+		// throttle the scroll callback for performance
+		document.removeEventListener("scroll", this.events.scroll);
+
+		// throttle the resize callback for performance
+		window.removeEventListener("resize", this.events.resize);
+
+		// detect native change event
+		this.input.removeEventListener("change", this.events.change);
 
 		if ( this.touch ) {
-			this.nodes.container.removeEventListener("touchstart", this.listeners.touchstart);
+			this.nodes.container.removeEventListener("touchstart", this.events.touchstart);
 		} else {
-			this.nodes.container.removeEventListener("mousedown", this.listeners.down);
+			this.nodes.container.removeEventListener("mousedown", this.events.down);
 		}
 
-		// remove scroll listener
-		document.removeEventListener("scroll", this.listeners.scroll);
+		// listen for native input to allow keyboard control on focus
+		this.input.removeEventListener('input', this.events.set);
 
-		// remove resize listener
-		window.removeEventListener("resize", this.listeners.resize);
-
-		// remove input listener
-		this.input.removeEventListener("change", this.listeners.change);
-
-		// remove form listener
+		// detect form reset
 		if (this.input.form) {
-			this.input.form.removeEventListener("reset", this.listeners.reset);
+			this.input.form.removeEventListener("reset", this.events.reset);
 		}
 
-		this.listeners = null;
+		this.events = null;
 	}
 	/**
 	 * Create DOM element helper
@@ -604,19 +621,9 @@ class Rangeable {
 	 */
 	createElement(type, obj) {
 		const el = document.createElement(type);
-
-		if (typeof obj === "string") {
+		if ( obj ) {
 			el.classList.add(obj);
-		} else if ( obj === Object(obj) ) {
-			for ( let prop in obj ) {
-				if ( prop in el ) {
-					el[prop] = obj[prop];
-				} else {
-					el.setAttribute(el[prop], obj[prop]);
-				}
-			}
 		}
-
 		return el;
 	}
 

@@ -84,6 +84,19 @@ $handle-size: 22px;
 		top: -(($handle-size - $bar-size) / 2);
 		right: -($handle-size / 2);
 
+		&:focus{
+			outline: none;
+			&::after {
+				position: absolute;
+				width: $handle-size;
+				height: $handle-size;
+				bottom: -$handle-border;
+				right: -$handle-border;
+				outline: 1px dotted #000;
+				content: "";
+			}
+		}
+
 		&.active {
 			z-index: 10;
 		}
@@ -93,37 +106,37 @@ $handle-size: 22px;
 		}
 	}
 
-		/* tooltip */
-		.rangeable-tooltip {
+	/* tooltip */
+	.rangeable-tooltip {
+		position: absolute;
+
+		bottom: calc(100% + #{($handle-size - $bar-size) / 2} + #{$tip-offset + $tip-arrow} - #{($bar-size - $handle-border) / 2});
+		right: 50%;
+		transform: translate3d(50%,0,0);
+
+		text-align: center;
+
+		padding: $tip-padding;
+		background-color: $color-primary;
+		border-radius: $tip-radius;
+		font-weight: bold;
+		color: #fff;
+		font-family: Consolas, Courier New, Lucida Console, sans-serif;
+
+		/* tooltip arrow */
+		&::before {
+			width: 0;
+			height: 0;
+			border-width: $tip-arrow $tip-arrow 0 $tip-arrow;
+			border-style: solid;
+			border-color: $color-primary transparent transparent transparent;
 			position: absolute;
-
-			bottom: calc(100% + #{($handle-size - $bar-size) / 2} + #{$tip-offset + $tip-arrow} - #{($bar-size - $handle-border) / 2});
-			right: 50%;
-			transform: translate3d(50%,0,0);
-
-			text-align: center;
-
-			padding: $tip-padding;
-			background-color: $color-primary;
-			border-radius: $tip-radius;
-			font-weight: bold;
-			color: #fff;
-			font-family: Consolas, Courier New, Lucida Console, sans-serif;
-
-			/* tooltip arrow */
-			&::before {
-				width: 0;
-				height: 0;
-				border-width: $tip-arrow $tip-arrow 0 $tip-arrow;
-				border-style: solid;
-				border-color: $color-primary transparent transparent transparent;
-				position: absolute;
-				left: 50%;
-				top: 100%;
-				transform: translate3d(-50%,0,0);
-				content: "";
-			}
+			left: 50%;
+			top: 100%;
+			transform: translate3d(-50%,0,0);
+			content: "";
 		}
+	}
 
 
 	&.rangeable-vertical {
@@ -229,7 +242,15 @@ $handle-size: 22px;
 	&:focus {
 		& + .rangeable-track {
 			.rangeable-handle {
-				border: 1px solid $color-primary;
+				&::after {
+					position: absolute;
+					width: $handle-size;
+					height: $handle-size;
+					bottom: -$handle-border;
+					right: -$handle-border;
+					outline: 1px dotted #000;
+					content: "";
+				}
 			}
 		}
 	}
