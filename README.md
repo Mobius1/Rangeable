@@ -5,7 +5,6 @@ A small dependency-free lib to transform `<input type="range">` elements into so
 
 - [x] No dependencies
 - [x] <3kb gzipped
-- [x] IE10+
 - [x] Touch enabled
 - [x] Responsive
 - [x] Single or double handles.
