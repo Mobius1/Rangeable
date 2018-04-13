@@ -5,7 +5,7 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version: 0.0.10
+ * Version: 0.0.11
  *
  */
 class Rangeable {
@@ -22,7 +22,7 @@ class Rangeable {
 				tooltip: "rangeable-tooltip",
 				track: "rangeable-track",
 				multiple: "rangeable-multiple",
-				disabled: "rangeable-disabled",
+				disabled: "rangeable-disabled"
 			}
 		};
 
@@ -31,17 +31,18 @@ class Rangeable {
 			input = document.querySelector(input);
 		}
 
-		this.input 		= input;
-		this.config 	= Object.assign({}, defaultConfig, config);
+		this.input = input;
+		this.config = Object.assign({}, defaultConfig, config);
 
-		this.mouseAxis 	= { x: "clientX", y: "clientY" };
-		this.trackSize 	= { x: "width", y: "height" };
-		this.trackPos 	= { x: "left", y: "top" };
-		this.lastPos 		= 0;
-
-		this.double = this.config.type === "double" || Array.isArray(this.config.value);
-
-		this.touch 		= "ontouchstart" in window || (window.DocumentTouch && document instanceof DocumentTouch);
+		this.mouseAxis = { x: "clientX", y: "clientY" };
+		this.trackSize = { x: "width", y: "height" };
+		this.trackPos = { x: "left", y: "top" };
+		this.lastPos = 0;
+		this.double =
+			this.config.type === "double" || Array.isArray(this.config.value);
+		this.touch =
+			"ontouchstart" in window ||
+			(window.DocumentTouch && document instanceof DocumentTouch);
 
 		this.init();
 
@@ -53,7 +54,7 @@ class Rangeable {
 	 * @return {Void}
 	 */
 	init() {
-		if ( !this.input.rangeable ) {
+		if (!this.input.rangeable) {
 			const props = { min: 0, max: 100, step: 1, value: this.input.value };
 
 			for (let prop in props) {
@@ -72,15 +73,17 @@ class Rangeable {
 
 			this.input.rangeable = this;
 
-			if ( this.double ) {
-				this.input.values = this.config.value ? this.config.value : [this.input.min, this.input.max];
+			if (this.double) {
+				this.input.values = this.config.value
+					? this.config.value
+					: [this.input.min, this.input.max];
 				this.input.defaultValues = this.input.values.slice();
 			} else {
 				if (!this.input.defaultValue) {
 					this.input.defaultValue = this.input.value;
 				}
 			}
-				
+
 			this.render();
 
 			this.initialised = true;
@@ -104,8 +107,11 @@ class Rangeable {
 
 		track.appendChild(progress);
 
-		if ( this.double ) {
-			handle = [this.createElement("div", c.handle),	this.createElement("div", c.handle)];
+		if (this.double) {
+			handle = [
+				this.createElement("div", c.handle),
+				this.createElement("div", c.handle)
+			];
 			tooltip = [
 				this.createElement("div", c.tooltip),
 				this.createElement("div", c.tooltip),
@@ -119,7 +125,9 @@ class Rangeable {
 				node.tabIndex = 1;
 			});
 
-			if ( o.vertical ) {
+			this.input.tabIndex = -1;
+
+			if (o.vertical) {
 				progress.appendChild(handle[0]);
 			}
 
@@ -148,7 +156,7 @@ class Rangeable {
 		if (o.tooltips) {
 			container.classList.add("has-tooltip");
 
-			if ( typeof o.tooltips === "string" && o.tooltips === "always" ) {
+			if (typeof o.tooltips === "string" && o.tooltips === "always") {
 				container.classList.add("show-tooltip");
 			}
 		}
@@ -164,7 +172,7 @@ class Rangeable {
 	}
 
 	reset() {
-		if ( this.double ) {
+		if (this.double) {
 			this.input.defaultValues.forEach(this.setValue, this);
 		} else {
 			this.setValue(this.input.defaultValue);
@@ -177,67 +185,55 @@ class Rangeable {
 		const max = parseFloat(this.input.max);
 		const step = parseFloat(this.input.step);
 		const rect = this.rects;
-		const axis = this.touch ? e.touches[0][this.mouseAxis[this.axis]] : e[this.mouseAxis[this.axis]];
-		const pos = axis - this.rects.container[this.trackPos[this.axis]];
+		const axis = this.touch
+			? e.touches[0][this.mouseAxis[this.axis]]
+			: e[this.mouseAxis[this.axis]];
+		const point = axis - this.rects.container[this.trackPos[this.axis]];
 		const size = rect.container[this.trackSize[this.axis]];
-		
-		if ( e.type === "mousedown" ) {
-			if ( (!this.double && this.nodes.handle.contains(e.target)) ||
-					 (this.double && (this.nodes.handle[0].contains(e.target) || this.nodes.handle[1].contains(e.target))) ) {
+
+		if (e.type === "mousedown") {
+			if (
+				(!this.double && this.nodes.handle.contains(e.target)) ||
+				(this.double &&
+					(this.nodes.handle[0].contains(e.target) ||
+						this.nodes.handle[1].contains(e.target)))
+			) {
 				return false;
 			}
 		}
 
 		// get the position of the cursor over the bar as a percentage
 		let position = this.config.vertical
-			? (size - pos) / size * 100
-			: pos / size * 100;
+			? (size - point) / size * 100
+			: point / size * 100;
 
 		// work out the value from the position
-		let value = position * (max - min) / 100 + min;
+		let val = position * (max - min) / 100 + min;
 
 		// apply granularity (step)
-		value = Math.ceil(value / step) * step;
-		
-		if ( axis >= this.lastPos ) {
-			value -= step;
-		}		
-		
+		val = Math.ceil(val / step) * step;
+
+		if (axis >= this.lastPos) {
+			val -= step;
+		}
+
 		// prevent change event from firing if slider hasn't moved
-		if ( parseFloat(value) === parseFloat(this.startValue) ) {
+		if (parseFloat(val) === parseFloat(this.startValue)) {
 			return false;
-		}		
+		}
 
 		let index = false;
 
-		if ( this.double ) {
+		if (this.double) {
 			index = this.activeHandle.index;
-
-			switch(index) {
-				case 0:
-					if ( value >= this.input.values[1] ) {
-						value = this.input.values[1];
-					}
-					break;
-				case 1:
-					if ( value <= this.input.values[0] ) {
-						value = this.input.values[0];
-					}
-					break;
+			if (!index && val >= this.input.values[1]) {
+				val = this.input.values[1];
+			} else if (index && val <= this.input.values[0]) {
+				val = this.input.values[0];
 			}
 		}
 
-		this.setValue(value, index);
-	}
-
-	change() {
-		// this.onChange();
-	}
-
-	touchstart(e) {
-		// this.nodes.container.removeEventListener("mousedown", this.events.down);
-
-		this.down(e);
+		this.setValue(val, index);
 	}
 
 	/**
@@ -245,7 +241,7 @@ class Rangeable {
 	 * @param  {Object} e
 	 * @return {Void}
 	 */
-	down(e) {
+	start(e) {
 		e.preventDefault();
 
 		this.startValue = this.getValue();
@@ -258,17 +254,17 @@ class Rangeable {
 
 		this.activeHandle = this.getHandle(e);
 
-		this.activeHandle.classList.add('active');
+		this.activeHandle.classList.add("active");
 
 		this.setValueFromPosition(e);
 
-		if ( this.touch ) {
+		if (this.touch) {
 			document.addEventListener("touchmove", this.events.move, false);
-			document.addEventListener("touchend", this.events.up, false);
-			document.addEventListener("touchcancel", this.events.up, false);
+			document.addEventListener("touchend", this.events.stop, false);
+			document.addEventListener("touchcancel", this.events.stop, false);
 		} else {
 			document.addEventListener("mousemove", this.events.move, false);
-			document.addEventListener("mouseup", this.events.up, false);
+			document.addEventListener("mouseup", this.events.stop, false);
 		}
 	}
 
@@ -279,7 +275,9 @@ class Rangeable {
 	 */
 	move(e) {
 		this.setValueFromPosition(e);
-		this.lastPos = this.touch ? e.touches[0][this.mouseAxis[this.axis]] : e[this.mouseAxis[this.axis]];
+		this.lastPos = this.touch
+			? e.touches[0][this.mouseAxis[this.axis]]
+			: e[this.mouseAxis[this.axis]];
 	}
 
 	/**
@@ -287,28 +285,98 @@ class Rangeable {
 	 * @param  {Object} e
 	 * @return {Void}
 	 */
-	up(e) {
+	stop(e) {
 		this.stopValue = this.getValue();
 
 		this.nodes.container.classList.remove("dragging");
 
 		this.onEnd();
 
-		this.activeHandle.classList.remove('active');
+		this.activeHandle.classList.remove("active");
 		this.activeHandle = false;
 
 		document.removeEventListener("mousemove", this.events.move);
-		document.removeEventListener("mouseup", this.events.up);
+		document.removeEventListener("mouseup", this.events.stop);
 
 		document.removeEventListener("touchmove", this.events.move);
-		document.removeEventListener("touchend", this.events.up);
-		document.removeEventListener("touchcancel", this.events.up);
+		document.removeEventListener("touchend", this.events.stop);
+		document.removeEventListener("touchcancel", this.events.stop);
 
-		if ( this.startValue !== this.stopValue ) {
+		if (this.startValue !== this.stopValue) {
 			this.input.dispatchEvent(new Event("change"));
 		}
 
 		this.startValue = null;
+	}
+
+	keydown(e) {
+		if ( this.double ) {
+			this.nodes.handle.forEach(node => {
+				if ( node === document.activeElement ) {
+					switch(e.key) {
+						case 'ArrowRight':
+						case 'ArrowUp':
+							this.stepUp(node.index);
+							break;
+						case 'ArrowLeft':
+						case 'ArrowDown':
+							this.stepDown(node.index);
+							break;
+					}
+				}
+			});
+		}
+	}
+
+	stepUp(index) {
+		const step = parseFloat(this.input.step);
+
+		let val = this.getValue();
+
+		if ( this.double && index !== undefined ) {
+			val = val[index];
+		}
+
+		let newval = this.limit(parseFloat(val) + step, index);
+
+		this.setValue(newval, index);
+	}
+
+	stepDown(index) {
+		const step = parseFloat(this.input.step);
+
+		let val = this.getValue();
+
+		if ( this.double && index !== undefined ) {
+			val = val[index];
+		}
+
+		let newval = this.limit(parseFloat(val) - step, index);
+
+		this.setValue(newval, index);
+	}
+
+	limit(value, index) {
+		const el = this.input;
+		let min = parseFloat(el.min);
+		let max = parseFloat(el.max);
+		let inval = this.getValue();
+
+		if ( this.double && index !== undefined ) {
+			if (!index && value >= el.values[1]) {
+				value = el.values[1];
+			} else if (index && value <= el.values[0]) {
+				value = el.values[0];
+			}
+		}
+
+		if ( value >= max ) {
+			value = max;
+		} else if ( value <= min ) {
+			value = min;
+		}
+
+		return value;
 	}
 
 	/**
@@ -318,12 +386,12 @@ class Rangeable {
 	recalculate() {
 		let handle = [];
 
-		if ( this.double ) {
+		if (this.double) {
 			this.nodes.handle.forEach((node, i) => {
 				handle[i] = node.getBoundingClientRect();
 			});
 		} else {
-			handle = this.nodes.handle.getBoundingClientRect()
+			handle = this.nodes.handle.getBoundingClientRect();
 		}
 
 		this.rects = {
@@ -342,11 +410,11 @@ class Rangeable {
 		this.accuracy = 0;
 
 		// detect float
-		if ( this.input.step.includes(".") ) {
-			this.accuracy = (this.input.step.split('.')[1] || []).length;
+		if (this.input.step.includes(".")) {
+			this.accuracy = (this.input.step.split(".")[1] || []).length;
 		}
 
-		if ( this.double ) {
+		if (this.double) {
 			this.input.values.forEach((val, i) => {
 				this.setValue(val, i);
 			});
@@ -392,37 +460,41 @@ class Rangeable {
 
 		value = this.parseValue(value);
 
-		if ( this.double && index === undefined ) {
+		if (this.double && index === undefined) {
 			return false;
 		}
 
-		if ( this.double ) {
+		if (this.double) {
 			handle = this.activeHandle ? this.activeHandle : nodes.handle[index];
 		}
 
-		const doChange = this.initialised && (value !== this.input.value || this.nativeEvent);
+		const doChange =
+			this.initialised && (value !== this.input.value || this.nativeEvent);
 
 		// update the value
-		if ( this.double ) {
+		if (this.double) {
 			const values = this.input.values;
 			values[index] = value;
 
-			if ( this.config.tooltips ) {
+			if (this.config.tooltips) {
 				// update the node so we can get the width / height
 				nodes.tooltip[index].textContent = value;
 
 				// check if tips are intersecting...
-				const intersecting = this.tipsIntersecting();
+				const a = nodes.tooltip[0].getBoundingClientRect();
+				const b = nodes.tooltip[1].getBoundingClientRect();
+				const intersect = !( a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom );
 
 				// ... and set the className where appropriate
-				nodes.container.classList.toggle("combined-tooltip", intersecting);
+				nodes.container.classList.toggle("combined-tooltip", intersect);
 
-				if ( intersecting ) {
+				if (intersect) {
 					// Format the combined tooltip.
 					// Only show single value if they both match, otherwise show both seperated by a hyphen
-					nodes.tooltip[2].textContent = values[0] === values[1] ? values[0] : `${values[0]} - ${values[1]}`;
+					nodes.tooltip[2].textContent =
+						values[0] === values[1] ? values[0] : `${values[0]} - ${values[1]}`;
 				}
-		}
+			}
 		} else {
 			this.input.value = value;
 			nodes.tooltip.textContent = value;
@@ -431,10 +503,10 @@ class Rangeable {
 		// set bar size
 		this.setPosition(value, index);
 
-		if ( doChange ) {
+		if (doChange) {
 			this.onChange();
 
-			if ( !this.nativeEvent ) {
+			if (!this.nativeEvent) {
 				this.input.dispatchEvent(new Event("input"));
 			}
 
@@ -455,12 +527,14 @@ class Rangeable {
 	setPosition(value) {
 		let width;
 
-		if ( this.double ) {
+		if (this.double) {
 			let start = this.getPosition(this.input.values[0]);
 			let end = this.getPosition(this.input.values[1]);
 
 			// set the start point of the bar
-			this.nodes.progress.style[this.config.vertical?"bottom":"left"] = `${start}px`;
+			this.nodes.progress.style[
+				this.config.vertical ? "bottom" : "left"
+			] = `${start}px`;
 
 			width = end - start;
 		} else {
@@ -480,19 +554,9 @@ class Rangeable {
 		const min = parseFloat(this.input.min);
 		const max = parseFloat(this.input.max);
 
-		return (value - min) / (max - min) * this.rects.container[this.trackSize[this.axis]];
-	}
-
-	/**
-	 * Check whether the tooltips are colliding
-	 * @return {Boolean}
-	 */
-	tipsIntersecting() {
-		const tips = this.nodes.tooltip;
-		const a = tips[0].getBoundingClientRect();
-		const b = tips[1].getBoundingClientRect();
-
-		return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+		return (
+			(value - min) / (max - min) * this.rects.container[this.trackSize[this.axis]]
+		);
 	}
 
 	/**
@@ -501,45 +565,27 @@ class Rangeable {
 	 * @return {Obejct} HTMLElement
 	 */
 	getHandle(e) {
-		if ( !this.double ) {
+		if (!this.double) {
 			return this.nodes.handle;
 		}
 
 		const r = this.rects;
-		const distA = Math.abs(e[this.mouseAxis[this.axis]] - r.handle[0][this.trackPos[this.axis]]);
-		const distB = Math.abs(e[this.mouseAxis[this.axis]] - r.handle[1][this.trackPos[this.axis]]);
+		const distA = Math.abs(
+			e[this.mouseAxis[this.axis]] - r.handle[0][this.trackPos[this.axis]]
+		);
+		const distB = Math.abs(
+			e[this.mouseAxis[this.axis]] - r.handle[1][this.trackPos[this.axis]]
+		);
 		const handle = e.target.closest(`.${this.config.classes.handle}`);
 
-		if ( handle ) {
+		if (handle) {
 			return handle;
 		} else {
-			if ( distA > distB ) {
+			if (distA > distB) {
 				return this.nodes.handle[1];
 			} else {
 				return this.nodes.handle[0];
 			}
-		}
-	}
-
-	/**
-	 * Destroy the instance
-	 * @return {Void}
-	 */
-	destroy() {
-		if ( this.input.rangeable ) {
-			// remove all event events
-			this.unbind();
-
-			// remove the className from the input
-			this.input.classList.remove(this.config.classes.input);
-
-			// kill all nodes
-			this.nodes.container.parentNode.replaceChild(this.input, this.nodes.container);
-
-			// remove the reference from the input
-			delete(this.input.rangeable);
-
-			this.initialised = false;
 		}
 	}
 
@@ -566,25 +612,32 @@ class Rangeable {
 			this.config.onEnd.call(this, this.getValue());
 		}
 	}
-	
+
 	enable() {
-		if ( this.disabled ) {
-			if ( this.touch ) {
-				this.nodes.container.addEventListener("touchstart", this.events.touchstart, false);
+		if (this.disabled) {
+			if (this.touch) {
+				this.nodes.container.addEventListener(
+					"touchstart",
+					this.events.touchstart,
+					false
+				);
 			} else {
 				this.nodes.container.addEventListener("mousedown", this.events.down);
 			}
 
 			this.nodes.container.classList.remove(this.config.classes.disabled);
-			
+
 			this.disabled = false;
 		}
 	}
-	
+
 	disable() {
-		if ( !this.disabled ) {
-			if ( this.touch ) {
-				this.nodes.container.removeEventListener("touchstart", this.events.touchstart);
+		if (!this.disabled) {
+			if (this.touch) {
+				this.nodes.container.removeEventListener(
+					"touchstart",
+					this.events.touchstart
+				);
 			} else {
 				this.nodes.container.removeEventListener("mousedown", this.events.down);
 			}
@@ -593,18 +646,17 @@ class Rangeable {
 
 			this.disabled = true;
 		}
-	}	
+	}
 
 	bind() {
 		this.events = {
-			down: this.down.bind(this),
-			touchstart: this.touchstart.bind(this),
+			start: this.start.bind(this),
 			move: this.move.bind(this),
-			up: this.up.bind(this),
+			stop: this.stop.bind(this),
 			update: this.update.bind(this),
-			change: this.change.bind(this),
 			reset: this.reset.bind(this),
 			set: this.native.bind(this),
+			key: this.keydown.bind(this),
 		};
 
 		this.events.scroll = this.throttle(this.events.update, 100);
@@ -616,17 +668,19 @@ class Rangeable {
 		// throttle the resize callback for performance
 		window.addEventListener("resize", this.events.resize, false);
 
-		// detect native change event
-		this.input.addEventListener("change", this.events.change, false);
-
-		if ( this.touch ) {
-			this.nodes.container.addEventListener("touchstart", this.events.touchstart, false);
-		} else {
-			this.nodes.container.addEventListener("mousedown", this.events.down);
+		if ( this.double ) {
+			document.addEventListener("keydown", this.events.key, false);
 		}
 
+		// touchstart/mousedown
+		this.nodes.container.addEventListener(
+			this.touch ? "touchstart" : "mousedown",
+			this.events.start,
+			false
+		);
+
 		// listen for native input to allow keyboard control on focus
-		this.input.addEventListener('input', this.events.set);
+		this.input.addEventListener("input", this.events.set);
 
 		// detect form reset
 		if (this.input.form) {
@@ -641,17 +695,17 @@ class Rangeable {
 		// throttle the resize callback for performance
 		window.removeEventListener("resize", this.events.resize);
 
-		// detect native change event
-		this.input.removeEventListener("change", this.events.change);
-
-		if ( this.touch ) {
-			this.nodes.container.removeEventListener("touchstart", this.events.touchstart);
-		} else {
-			this.nodes.container.removeEventListener("mousedown", this.events.down);
+		if ( this.double ) {
+			document.removeEventListener("keydown", this.events.key);
 		}
 
+		this.nodes.container.removeEventListener(
+			this.touch ? "touchstart" : "mousedown",
+			this.events.start
+		);
+
 		// listen for native input to allow keyboard control on focus
-		this.input.removeEventListener('input', this.events.set);
+		this.input.removeEventListener("input", this.events.set);
 
 		// detect form reset
 		if (this.input.form) {
@@ -660,7 +714,32 @@ class Rangeable {
 
 		this.events = null;
 	}
-	
+
+	/**
+	 * Destroy the instance
+	 * @return {Void}
+	 */
+	destroy() {
+		if (this.input.rangeable) {
+			// remove all event events
+			this.unbind();
+
+			// remove the className from the input
+			this.input.classList.remove(this.config.classes.input);
+
+			// kill all nodes
+			this.nodes.container.parentNode.replaceChild(
+				this.input,
+				this.nodes.container
+			);
+
+			// remove the reference from the input
+			delete this.input.rangeable;
+
+			this.initialised = false;
+		}
+	}
+
 	/**
 	 * Create DOM element helper
 	 * @param  {String}   a nodeName
@@ -669,7 +748,7 @@ class Rangeable {
 	 */
 	createElement(type, obj) {
 		const el = document.createElement(type);
-		if ( obj ) {
+		if (obj) {
 			el.classList.add(obj);
 		}
 		return el;
