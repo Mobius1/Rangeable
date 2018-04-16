@@ -527,14 +527,13 @@
 	 */
 	Rangeable.prototype.limit = function(value, index) {
 		const el = this.input;
-		let min = parseFloat(el.min);
-		let max = parseFloat(el.max);
-		let inval = this.getValue();
+		const min = parseFloat(el.min);
+		const max = parseFloat(el.max);
 
 		if ( this.double && index !== undefined ) {
-			if (!index && value >= el.values[1]) {
+			if (!index && value > el.values[1]) {
 				value = el.values[1];
-			} else if (index && value <= el.values[0]) {
+			} else if (index && value < el.values[0]) {
 				value = el.values[0];
 			}
 
@@ -555,17 +554,17 @@
 			}
 		} else {
 			if ( this.limits ) {
-					if ( value > this.limits.max ) {
-						value = this.limits.max;
-					} else if ( value < this.limits.min ) {
-						value = this.limits.min;
-					}
+				if ( value > this.limits.max ) {
+					value = this.limits.max;
+				} else if ( value < this.limits.min ) {
+					value = this.limits.min;
+				}
 			}
 		}
 
-		if ( value >= max ) {
+		if ( value > max ) {
 			value = max;
-		} else if ( value <= min ) {
+		} else if ( value < min ) {
 			value = min;
 		}
 
@@ -607,31 +606,31 @@
 			this.accuracy = (this.input.step.split(".")[1] || []).length;
 		}
 
+		const value = this.getValue();
+
 		const size = this.rects.container[this.trackSize[this.axis]];
+
+		const setBuffer = (el, offset, max) => {
+			el.style[this.config.vertical ? "bottom" : "left"] = `${offset}px`;
+			el.style[this.trackSize[this.axis]] = `${(max / this.input.max * size) - offset}px`;
+		};
+
 		if ( this.double ) {
+			// set buffers
 			if ( this.config.handles && this.nodes.buffers ) {
 				this.config.handles.forEach((obj, i) => {
-					const buffer = this.nodes.buffers[i];
-					const offset = obj.min / this.input.max * size;
-					buffer.style[this.config.vertical ? "bottom" : "left"] = `${offset}px`;
-					buffer.style[this.trackSize[this.axis]] = `${(obj.max / this.input.max * size) - offset}px`;
+					setBuffer(this.nodes.buffers[i], (obj.min / this.input.max * size), obj.max);
 				});
 			}
-		} else {
-			if ( this.config.handle ) {
-					const buffer = this.nodes.buffer;
-					const offset = this.config.handle.min / this.input.max * size;
-					buffer.style.left = `${offset}px`;
-					buffer.style.width = `${(this.config.handle.max / this.input.max * size) - offset}px`;
-			}
-		}
 
-		const value = this.getValue();
-		if (this.double) {
 			this.input.values.forEach((val, i) => {
 				this.setValue(this.limit(val, i), i);
 			});
 		} else {
+			// set buffer
+			if ( this.config.handle ) {
+				setBuffer(this.nodes.buffer, (this.config.handle.min / this.input.max * size), this.config.handle.max);
+			}
 			this.setValue(this.limit(value));
 		}
 	}
