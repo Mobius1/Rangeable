@@ -7,8 +7,9 @@ A dependency-free, responsive and touch-enabled javascript range slider to make 
 - [x] <3kb gzipped
 - [x] Touch enabled
 - [x] Responsive
-- [x] Single or double handles.
-- [x] Fully stylable to fit your apps needs.
+- [x] Single or double range layouts.
+- [x] Horzontal and vertical orientations.
+- [x] Fully stylable to fit your app.
 
 ![Rangeable](/docs/rangeable.png?raw=true "Rangeable")
 
@@ -53,6 +54,8 @@ const rangeable = new Rangeable(input, {
     step: 1,
     value: 50,
     vertical: false,
+    handle: undefined,
+    handles: undefined,
     onInit: function() {
         // do something when the instance has loaded
     },
