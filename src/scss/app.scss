@@ -27,119 +27,6 @@ $handle-size: 22px;
 		}
 	}
 
-	/* track */
-	.rangeable-track {
-		width: 100%;
-		height: $bar-size;
-		background-color: $color-secondary;
-		position: relative;
-		border-radius: $bar-size / 2;
-	}
-
-	/* progress bar */
-	.rangeable-progress {
-		height: $bar-size;
-		width: 100%;
-		background-color: $color-primary;
-		position: absolute;
-		left: 0;
-		top: 0;
-		border-radius: $bar-size / 2;
-		transform-origin: 0 0 0;
-
-		& > .rangeable-tooltip {
-			display: none;
-			z-index: 11;
-			top: auto;
-			bottom: calc(100% + #{($handle-size - $bar-size) / 2} + #{$tip-offset + $tip-arrow});
-			white-space: nowrap;
-		}
-	}
-
-	/* handle */
-	.rangeable-handle {
-		box-sizing: border-box;
-		width: $handle-size;
-		height: $handle-size;
-		border: $handle-border solid $color-primary;
-		border-radius: 50%;
-		background-color: #fff;
-		position: absolute;
-		top: 50%;
-		right: 0;
-		transform: translate3d(50%, -50%, 0);
-
-		// opacity: 0.4;
-
-		&:focus{
-			outline: none;
-			&::after {
-				position: absolute;
-				width: $handle-size;
-				height: $handle-size;
-				bottom: -$handle-border;
-				right: -$handle-border;
-				outline: 1px dotted #000;
-				content: "";
-			}
-		}
-
-		&.active {
-			z-index: 10;
-		}
-
-		.rangeable-tooltip {
-			display: none;
-		}
-	}
-
-	/* tooltip */
-	.rangeable-tooltip {
-		position: absolute;
-		right: 50%;
-		bottom: calc(100% + #{$handle-border} + #{$tip-arrow} + #{$tip-offset});
-		transform: translate3d(50%,0,0);
-
-		text-align: center;
-
-		padding: $tip-padding;
-		background-color: $color-primary;
-		border-radius: $tip-radius;
-		font-weight: bold;
-		font-size: $tip-font;
-		color: #fff;
-		font-family: "Inconsolata", Consolas, Courier New, Lucida Console, sans-serif;
-
-		/* tooltip arrow */
-		&::before {
-			width: 0;
-			height: 0;
-			border-width: $tip-arrow $tip-arrow 0 $tip-arrow;
-			border-style: solid;
-			border-color: $color-primary transparent transparent transparent;
-			position: absolute;
-			left: 50%;
-			top: 100%;
-			transform: translate3d(-50%,0,0);
-			content: "";
-		}
-	}
-
-	.rangeable-buffers {
-		position: absolute;
-		left: 0;
-		top: 0;
-		height: 100%;
-		width: 100%;
-	}
-
-	.rangeable-buffer {
-		position: absolute;
-		background-color: rgba(0,0,0,0.2);
-		border-radius: 4px;
-		height: 100%;
-	}
-
 	&.rangeable-multiple {
 
 		&.combined-tooltip {
@@ -210,7 +97,7 @@ $handle-size: 22px;
 
 		.rangeable-buffer {
 			width: 100%;
-			height: 0%;
+			height: 0;
 		}
 
 		&.combined-tooltip {
@@ -284,4 +171,117 @@ $handle-size: 22px;
 			}
 		}
 	}
+}
+
+/* track */
+.rangeable-track {
+	width: 100%;
+	height: $bar-size;
+	background-color: $color-secondary;
+	position: relative;
+	border-radius: $bar-size / 2;
+}
+
+/* progress bar */
+.rangeable-progress {
+	height: $bar-size;
+	width: 100%;
+	background-color: $color-primary;
+	position: absolute;
+	left: 0;
+	top: 0;
+	border-radius: $bar-size / 2;
+	transform-origin: 0 0 0;
+
+	& > .rangeable-tooltip {
+		display: none;
+		z-index: 11;
+		top: auto;
+		bottom: calc(100% + #{($handle-size - $bar-size) / 2} + #{$tip-offset + $tip-arrow});
+		white-space: nowrap;
+	}
+}
+
+/* handle */
+.rangeable-handle {
+	box-sizing: border-box;
+	width: $handle-size;
+	height: $handle-size;
+	border: $handle-border solid $color-primary;
+	border-radius: 50%;
+	background-color: #fff;
+	position: absolute;
+	top: 50%;
+	right: 0;
+	transform: translate3d(50%, -50%, 0);
+
+	// opacity: 0.4;
+
+	&:focus{
+		outline: none;
+		&::after {
+			position: absolute;
+			width: $handle-size;
+			height: $handle-size;
+			bottom: -$handle-border;
+			right: -$handle-border;
+			outline: 1px dotted #000;
+			content: "";
+		}
+	}
+
+	&.active {
+		z-index: 10;
+	}
+
+	.rangeable-tooltip {
+		display: none;
+	}
+}
+
+/* tooltip */
+.rangeable-tooltip {
+	position: absolute;
+	right: 50%;
+	bottom: calc(100% + #{$handle-border} + #{$tip-arrow} + #{$tip-offset});
+	transform: translate3d(50%,0,0);
+
+	text-align: center;
+
+	padding: $tip-padding;
+	background-color: $color-primary;
+	border-radius: $tip-radius;
+	font-weight: bold;
+	font-size: $tip-font;
+	color: #fff;
+	font-family: "Inconsolata", Consolas, Courier New, Lucida Console, sans-serif;
+
+	/* tooltip arrow */
+	&::before {
+		width: 0;
+		height: 0;
+		border-width: $tip-arrow $tip-arrow 0 $tip-arrow;
+		border-style: solid;
+		border-color: $color-primary transparent transparent transparent;
+		position: absolute;
+		left: 50%;
+		top: 100%;
+		transform: translate3d(-50%,0,0);
+		content: "";
+	}
+}
+
+.rangeable-buffers {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+}
+
+.rangeable-buffer {
+	position: absolute;
+	background-color: rgba(0,0,0,0.2);
+	border-radius: 4px;
+	height: 100%;
 }
