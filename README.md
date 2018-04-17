@@ -4,11 +4,11 @@
 A dependency-free, responsive and touch-enabled javascript range slider to make `<input type="range">` elements prettier and more configurable.
 
 - [x] No dependencies
-- [x] <3kb gzipped
+- [x] 3kb gzipped
 - [x] Touch enabled
 - [x] Responsive
 - [x] Single or double range layouts.
-- [x] Horzontal and vertical orientations.
+- [x] Horizontal and vertical orientations.
 - [x] Fully stylable to fit your app.
 
 ![Rangeable](/docs/rangeable.png?raw=true "Rangeable")

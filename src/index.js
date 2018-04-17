@@ -5,7 +5,7 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version: 0.1.0
+ * Version: 0.1.1
  *
  */
 (function(root, factory) {
@@ -21,7 +21,7 @@
 })(typeof global !== 'undefined' ? global : this.window || this.global, function() {
     "use strict";
 
-	const version = "0.1.0";
+	const version = "0.1.1";
 
 	/* HELPERS*/
 
@@ -193,6 +193,8 @@
 
 		let handle = createElement("div", c.handle);
 		let tooltip = createElement("div", c.tooltip);
+		
+		this.input.tabIndex = -1;
 
 		if (this.double) {
 			handle = [
@@ -219,8 +221,6 @@
 				}
 			});
 
-			this.input.tabIndex = -1;
-
 			if (o.vertical) {
 				progress.appendChild(handle[0]);
 			}
@@ -231,6 +231,8 @@
 		} else {
 			progress.appendChild(handle);
 			handle.appendChild(tooltip);
+			
+			handle.tabIndex = 1;
 
 			// locked handle?
 			if ( o.handle ) {
@@ -463,21 +465,29 @@
 	 * @return {Void}
 	 */
 	Rangeable.prototype.keydown = function(e) {
+		const step = (index) => {
+				switch(e.key) {
+					case 'ArrowRight':
+					case 'ArrowUp':
+						this.stepUp(index);
+						break;
+					case 'ArrowLeft':
+					case 'ArrowDown':
+						this.stepDown(index);
+						break;
+				}
+		};
+		
 		if ( this.double ) {
 			this.nodes.handle.forEach(node => {
 				if ( node === document.activeElement ) {
-					switch(e.key) {
-						case 'ArrowRight':
-						case 'ArrowUp':
-							this.stepUp(node.index);
-							break;
-						case 'ArrowLeft':
-						case 'ArrowDown':
-							this.stepDown(node.index);
-							break;
-					}
+					step(node.index);
 				}
 			});
+		} else {
+			if ( this.nodes.handle === document.activeElement ) {
+				step();
+			}
 		}
 	}
 
@@ -923,10 +933,9 @@
 
 		// throttle the resize callback for performance
 		on(window, "resize", this.events.resize);
-
-		if ( this.double ) {
-			on(document, "keydown", this.events.key);
-		}
+		
+		// key control
+		on(document, "keydown", this.events.key);
 
 		// touchstart/mousedown
 		on(this.nodes.container,
@@ -954,9 +963,7 @@
 		// throttle the resize callback for performance
 		off(window, "resize", this.events.resize);
 
-		if ( this.double ) {
-			off(document, "keydown", this.events.key);
-		}
+		off(document, "keydown", this.events.key);
 
 		off(this.nodes.container, this.touch ? "touchstart" : "mousedown");
 
