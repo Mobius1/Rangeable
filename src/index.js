@@ -5,7 +5,7 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version: 0.1.3
+ * Version: 0.1.4
  *
  */
 (function(root, factory) {
@@ -23,7 +23,7 @@
     function() {
         "use strict";
 
-        const version = "0.1.3";
+        const version = "0.1.4";
 
         /* HELPERS*/
 
@@ -318,6 +318,7 @@
                 track.appendChild(buffer);
 
                 if (o.handle) {
+                    this.limits = {};
                     if (o.handle.min !== undefined) {
                         this.limits.min = o.handle.min;
                     }
