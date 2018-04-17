@@ -1,7 +1,7 @@
 # Rangeable
 [![npm version](https://badge.fury.io/js/rangeable.svg)](https://badge.fury.io/js/rangeable) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/Mobius1/Rangeable/blob/master/LICENSE) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/Mobius1/Rangeable.svg)](http://isitmaintained.com/project/Mobius1/Rangeable "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/Mobius1/Rangeable.svg)](http://isitmaintained.com/project/Mobius1/Rangeable "Percentage of issues still open") ![](http://img.badgesize.io/Mobius1/Rangeable/master/dist/rangeable.min.js) ![](http://img.badgesize.io/Mobius1/Rangeable/master/dist/rangeable.min.js?compression=gzip&label=gzipped)
 
-A dependency-free, responsive and touch-enabled javascript range slider to make `<input type="range">` elements prettier and more configurable.
+A dependency-free, responsive and touch-enabled vanilla javascript range slider to make `<input type="range">` elements prettier and more configurable.
 
 - [x] No dependencies
 - [x] 3kb gzipped

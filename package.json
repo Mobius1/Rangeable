@@ -1,7 +1,7 @@
 {
   "name": "rangeable",
   "version": "0.1.5",
-  "description": "A dependency-free, responsive and touch-enabled javascript range slider.",
+  "description": "A dependency-free, responsive and touch-enabled javascript range slider written in vanilla javascript.",
   "main": "dist/rangeable.min.js",
   "scripts": {
     "test": "./node_modules/.bin/karma start --single-run --reporters=progress"
