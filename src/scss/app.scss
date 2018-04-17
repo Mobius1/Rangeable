@@ -125,6 +125,21 @@ $handle-size: 22px;
 		}
 	}
 
+	.rangeable-buffers {
+		position: absolute;
+		left: 0;
+		top: 0;
+		height: 100%;
+		width: 100%;
+	}
+
+	.rangeable-buffer {
+		position: absolute;
+		background-color: rgba(0,0,0,0.2);
+		border-radius: 4px;
+		height: 100%;
+	}
+
 	&.rangeable-multiple {
 
 		&.combined-tooltip {
@@ -191,6 +206,10 @@ $handle-size: 22px;
 				border-width: $tip-arrow $tip-arrow $tip-arrow 0;
 				border-color: transparent $color-primary transparent transparent;
 			}
+		}
+
+		.rangeable-buffer {
+			width: 100%;
 		}
 
 		&.combined-tooltip {
@@ -264,76 +283,4 @@ $handle-size: 22px;
 			}
 		}
 	}
-}
-
-/* RULER */
-$ruler-height: 30px;
-$ruler-offset: 2px;
-
-.rangeable-ruler {
-	position: relative;
-	width: 100%;
-	height: $ruler-height;
-	margin-bottom: $ruler-offset;
-
-	.rangeable-ruler--labels,
-	.rangeable-ruler--markers {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-	}
-
-	.rangeable-ruler--labels {
-		.rangeable-ruler--min,
-		.rangeable-ruler--max {
-			position: absolute;
-			text-align: center;
-
-			padding: $tip-padding;
-			background-color: $color-secondary;
-			border-radius: $tip-radius;
-			font-weight: bold;
-			font-size: $tip-font;
-			color: #fff;
-			font-family: Consolas, Courier New, Lucida Console, sans-serif;
-			white-space: nowrap;
-		}
-
-		.rangeable-ruler--min {
-			left: 0;
-		}
-		.rangeable-ruler--max {
-			right: 0;
-		}
-	}
-
-	.rangeable-ruler--markers {
-		position: absolute;
-
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-
-		div {
-			width: 1px;
-			height: $ruler-height / 2;
-			background-color: $color-secondary;
-		}
-	}
-}
-
-.rangeable-buffers {
-	position: absolute;
-	left: 0;
-	top: 0;
-	height: 100%;
-	width: 100%;
-}
-
-.rangeable-buffer {
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	background-color: rgba(0,0,0,0.2);
-	border-radius: 4px;
 }

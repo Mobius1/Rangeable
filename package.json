@@ -1,6 +1,6 @@
 {
   "name": "rangeable",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A dependency-free, responsive and touch-enabled javascript range slider.",
   "main": "dist/rangeable.min.js",
   "scripts": {
