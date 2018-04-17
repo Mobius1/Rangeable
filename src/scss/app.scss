@@ -1,28 +1,3 @@
-/*
- Rangeable
- Copyright (c) 2018 Karl Saunders
- Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
- and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
-
- Version: 0.1.1
-
-*/
-body {
-	margin: 0;
-	width: 100vw;
-	height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-flow: column;
-}
-
-.container {
-	width: 30vw;
-	height: 30vh;
-}
-
-
 $color-primary: #3db13d;
 $color-secondary: #ccc;
 
@@ -246,15 +221,15 @@ $handle-size: 22px;
 	}
 
 	&.combined-tooltip {
-		&.dragging, &.show-tooltip {
+		&.dragging, &.rangeable-tooltips--visible {
 			.rangeable-progress > .rangeable-tooltip {
 				display:block;
 			}
 		}
 	}
 
-	&.dragging, &.show-tooltip {
-		&.has-tooltip {
+	&.dragging, &.rangeable-tooltips--visible {
+		&.rangeable-tooltips {
 			.rangeable-handle {
 				.rangeable-tooltip {
 					display: block;
