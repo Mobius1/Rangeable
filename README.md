@@ -54,8 +54,7 @@ const rangeable = new Rangeable(input, {
     step: 1,
     value: 50,
     vertical: false,
-    handle: undefined,
-    handles: undefined,
+    controls: undefined,
     onInit: function() {
         // do something when the instance has loaded
     },
@@ -67,16 +66,6 @@ const rangeable = new Rangeable(input, {
     },
     onEnd: function() {
         // do something on mouseup/touchend
-    },
-    classes: {
-        input: "rangeable-input",
-        container: "rangeable-container",
-        vertical: "rangeable-vertical",
-        progress: "rangeable-progress",
-        handle: "rangeable-handle",
-        tooltip: "rangeable-tooltip",
-        track: "rangeable-track",
-        multiple: "rangeable-multiple",
     }
 });
 ```
