@@ -192,6 +192,10 @@
             }
 
             this.render();
+					
+            if ( this.input.disabled ) {
+                this.disable();
+            }					
 
             this.initialised = true;
         }
@@ -892,23 +896,21 @@
      * @return {Void}
      */
     Rangeable.prototype.enable = function() {
-        if (this.input.disabled) {
-            on(
+        on(
                 this.nodes.container,
                 this.touch ? "touchstart" : "mousedown",
                 this.events.start
-            );
+        );
 
-            if (this.double) {
+        if (this.double) {
                 this.nodes.handle.forEach(el => (el.tabIndex = 1));
-            } else {
+        } else {
                 this.nodes.handle.tabIndex = 1;
-            }
-
-            this.nodes.container.classList.remove(this.config.classes.disabled);
-
-            this.input.disabled = false;
         }
+
+        this.nodes.container.classList.remove(this.config.classes.disabled);
+
+        this.input.disabled = false;
     };
 
     /**
@@ -916,23 +918,21 @@
      * @return {Void}
      */
     Rangeable.prototype.disable = function() {
-        if (!this.input.disabled) {
-            off(
+        off(
                 this.nodes.container,
                 this.touch ? "touchstart" : "mousedown",
                 this.events.start
-            );
+        );
 
-            if (this.double) {
+        if (this.double) {
                 this.nodes.handle.forEach(el => el.removeAttribute("tabindex"));
-            } else {
+        } else {
                 this.nodes.handle.removeAttribute("tabindex");
-            }
-
-            this.nodes.container.classList.add(this.config.classes.disabled);
-
-            this.input.disabled = true;
         }
+
+        this.nodes.container.classList.add(this.config.classes.disabled);
+
+        this.input.disabled = true;
     };
 
     /**
